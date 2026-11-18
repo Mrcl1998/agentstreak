@@ -16,13 +16,9 @@ deployed source in `contract/`.)
 | Storage | Type | Purpose |
 |---|---|---|
 | `agentId` | `address` (immutable) | SPACE ID Agent ID contract: `0x60b9262456de011f7d15a54cdd8c48baaa8b022f` (ERC-721). Eligibility = `balanceOf(wallet) > 0`. |
-| `lastClaimDay` | `mapping(address => uint256)` | UTC day number (`block.timestamp / 1 days`) of the wallet's most recent claim. |
-| `streak` | `mapping(address => uint256)` | Current consecutive-day streak per wallet. |
-| `bestStreak` | `mapping(address => uint256)` | Longest streak ever reached per wallet. |
-| `totalClaims` | `mapping(address => uint256)` | Lifetime claim count per wallet. |
-| `hasBadge` | `mapping(address => bool)` | Whether the wallet already received its badge. |
-| `claimants` | `address[]` | Every wallet that has ever claimed, in first-claim order (for leaderboard paging). |
-| `badge` | ERC-721 (soulbound) | Badge token; transfers blocked (revert on `transferFrom`/`safeTransferFrom` except mint). Token ID = sequential or derived from wallet; 1 per wallet, enforced by `hasBadge`. |
+| `_users` | `mapping(address => User)` | Per-wallet struct: `streak` (uint32), `totalClaims` (uint32), `lastClaimDay` (uint64), `hasBadge` (bool). |
+| `_claimants` | `address[]` | Every wallet that has ever claimed, in first-claim order (for leaderboard paging). |
+| badge | ERC-721 (soulbound) | Badge token; transfers blocked (revert on `transferFrom`/`safeTransferFrom` except mint). 1 per wallet, enforced by `hasBadge`. Token ID = sequential. |
 
 No owner/admin storage, no fee storage, no pause flag, no upgrade slot — by design.
 
@@ -33,7 +29,7 @@ No owner/admin storage, no fee storage, no pause flag, no upgrade slot — by de
 3. **Streak update**:
    - If `lastClaimDay == day - 1` → `streak += 1` (consecutive day).
    - Else (gap of 2+ days, or first claim) → `streak = 1` (reset).
-   - `bestStreak = max(bestStreak, streak)`.
+   - No separate `bestStreak` is stored; the leaderboard ranks by current streak, then `totalClaims`.
 4. **Badge**: on first successful claim (`!hasBadge`), mint 1 soulbound badge to the caller, set `hasBadge = true`.
 5. **Events** (emitted on every claim — the indexing source of truth):
    - `Claimed(address indexed user, uint256 indexed day, uint256 streak, uint256 totalClaims)`
@@ -54,12 +50,12 @@ regardless of the user's local timezone.
 
 - **Source**: `Claimed` events (and `BadgeMinted` for badge holders).
 - **Off-chain indexer** (frontend or a lightweight script): scan events from the deploy
-  block, aggregate latest `streak` / `bestStreak` / `totalClaims` per address, sort by
-  current streak (then best streak, then total claims).
+  block, aggregate latest `streak` / `totalClaims` per address, sort by
+  current streak (then total claims).
 - **On-chain paging**: `getClaimants(uint256 offset, uint256 limit)` returns a slice of
-  `claimants[]` so the frontend can page through all claimants without loading the whole
-  array in one call; per-address state is read via view functions (`streakOf`,
-  `bestStreakOf`, `lastClaimDayOf`, `hasBadge`).
+  `_claimants[]` so the frontend can page through all claimants without loading the whole
+  array in one call; per-address state is read via view functions (`getStreak`,
+  `getStats`, `totalClaimants`, `claimants(index)`, badge `balanceOf`/`ownerOf`/`tokenURI`).
 - No off-chain database is required; the chain is the database.
 
 ## Gas notes
@@ -73,7 +69,8 @@ regardless of the user's local timezone.
   - Deploy gas used / cost at deploy-time gas price: **TODO**
   - Claim gas (first claim, with badge mint): **TODO**
   - Claim gas (repeat claim, no badge): **TODO**
-  - Compiler version + optimizer runs used: **TODO** (also recorded in `docs/VERIFICATION.md`)
+- Known compiler settings (from `contract/foundry.toml`, confirmed): solc **0.8.26**,
+  optimizer **enabled, 200 runs** (also recorded in `docs/VERIFICATION.md`).
 - If the deploy does not fit the budget, the contract must be slimmed (fewer storage
   slots, no unused code) before any retry — do not fund the deploy from another wallet
   without the owner's explicit approval.

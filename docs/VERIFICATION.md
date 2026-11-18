@@ -15,8 +15,8 @@ eligibility requirement (source verified + open-source repo).
 | Network | BNB Smart Chain mainnet (chain ID 56) |
 | Deployed contract address | **TODO — pending deploy** |
 | Contract file | `contract/AgentStreak.sol` (exact source as deployed) |
-| Compiler version | **TODO — from the contract agent (e.g. `v0.8.24+commit...`)** |
-| Optimizer | Enabled/disabled + runs — **TODO — from the contract agent** |
+| Compiler version | **0.8.26** (from `contract/foundry.toml`: `solc_version = "0.8.26"`) |
+| Optimizer | **Enabled, 200 runs** (from `contract/foundry.toml`: `optimizer = true`, `optimizer_runs = 200`) |
 | Constructor arguments | **TODO — from the contract agent (ABI-encoded, if any; likely the Agent ID address `0x60b9262456de011f7d15a54cdd8c48baaa8b022f`)** |
 | EVM version | **TODO — from the contract agent (default unless stated)** |
 | License | MIT |
