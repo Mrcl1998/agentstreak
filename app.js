@@ -39,7 +39,7 @@ const els = {
   countdown: $("countdown"), claimBtn: $("claimBtn"), claimStatus: $("claimStatus"),
   txResult: $("txResult"), badgeStatus: $("badgeStatus"), badgeMeta: $("badgeMeta"),
   badgeTokenId: $("badgeTokenId"), lbStatus: $("lbStatus"),
-  lbTable: $("lbTable"), lbBody: $("lbBody"),
+  progressLine: $("progressLine"), lbTable: $("lbTable"), lbBody: $("lbBody"),
 };
 
 const DEPLOYED = CONTRACT_ADDRESS.toLowerCase() !== ZERO;
@@ -272,6 +272,10 @@ async function loadLeaderboard() {
   try {
     const rp = await getReadProvider();
     const c = new ethers.Contract(CONTRACT_ADDRESS, AGENTSTREAK_ABI, rp);
+    const total = Number(await c.totalClaimants());
+    els.progressLine.textContent = total >= 30
+      ? total + " / 30 Agent IDs claimed — goal reached!"
+      : total + " / 30 Agent IDs claimed — " + (30 - total) + " more to go";
     let rows = [];
     try {
       // Latest-first: pull Claimed events, dedupe by user, keep best streak.
@@ -288,7 +292,6 @@ async function loadLeaderboard() {
       rows = [...best.values()];
     } catch (e) {
       // Public RPC event range too large / pruned — fall back to paging claimants.
-      const total = Number(await c.totalClaimants());
       const PAGE = 500;
       const addrs = [];
       for (let off = 0; off < total; off += PAGE) {
