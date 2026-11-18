@@ -4,28 +4,26 @@ Goal: verify the deployed `AgentStreak` contract source on BscScan (BNB Smart Ch
 mainnet) so anyone can read exactly what the contract does. This is a hackathon
 eligibility requirement (source verified + open-source repo).
 
-> Status: **NOT YET DONE — no contract is deployed yet.** This document is the
-> procedure to follow once the contract agent reports the deployed address and
-> the exact compiler settings. Do NOT attempt verification before then.
+> Status: **DEPLOYED 18 Nov 2026** — contract `0x3ce06B00DE25d6062D771664C231bb7Af725ecdb` (tx `0x28e466571d0e58da5ed42dc348024fceb4af6d55b54cc1001353894bd2fd9482`, block 134331779). Source verification on BscScan is still PENDING — follow the steps below; the flattened source + standard JSON input are in `contract/`.
 
 ## What you need before starting
 
 | Item | Value / status |
 |---|---|
 | Network | BNB Smart Chain mainnet (chain ID 56) |
-| Deployed contract address | **TODO — pending deploy** |
+| Deployed contract address | `0x3ce06B00DE25d6062D771664C231bb7Af725ecdb` |
 | Contract file | `contract/AgentStreak.sol` (exact source as deployed) |
 | Compiler version | **0.8.26** (from `contract/foundry.toml`: `solc_version = "0.8.26"`) |
 | Optimizer | **Enabled, 200 runs** (from `contract/foundry.toml`: `optimizer = true`, `optimizer_runs = 200`) |
-| Constructor arguments | **TODO — from the contract agent (ABI-encoded, if any; likely the Agent ID address `0x60b9262456de011f7d15a54cdd8c48baaa8b022f`)** |
-| EVM version | **TODO — from the contract agent (default unless stated)** |
+| Constructor arguments | **NONE** — no constructor; the Agent ID address is a compile-time constant in the source |
+| EVM version | **cancun** (solc 0.8.26 default; no `evm_version` set in `foundry.toml`) |
 | License | MIT |
 | BscScan account | Any account able to submit a verification (no payment required) |
 
 ## Step-by-step (BscScan web UI)
 
-1. Deploy the contract on BNB Smart Chain mainnet and record the deployed address
-   and the transaction hash.
+1. ~~Deploy the contract on BNB Smart Chain mainnet and record the deployed address
+   and the transaction hash.~~ **DONE 18 Nov 2026** — address `0x3ce06B00DE25d6062D771664C231bb7Af725ecdb`, tx `0x28e466571d0e58da5ed42dc348024fceb4af6d55b54cc1001353894bd2fd9482`, block 134331779.
 2. Go to the contract page: `https://bscscan.com/address/<DEPLOYED_ADDRESS>#code`
    and click **"Verify and Publish"**.
 3. Compiler type: choose **Solidity (Single file)** if the contract is a single

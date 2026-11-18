@@ -20,9 +20,9 @@ Any wallet holding an Agent ID can claim **once per day** (1 transaction, gas on
 | Item | Value |
 |---|---|
 | Network | BNB Smart Chain mainnet |
-| Contract address | **TBD — pending deploy** |
+| Contract address | `0x3ce06B00DE25d6062D771664C231bb7Af725ecdb` |
 | Agent ID contract | `0x60b9262456de011f7d15a54cdd8c48baaa8b022f` (SPACE ID, ERC-721) |
-| BscScan | TBD — link added once deployed and verified |
+| BscScan | https://bscscan.com/address/0x3ce06B00DE25d6062D771664C231bb7Af725ecdb (source verification pending — see docs/VERIFICATION.md) |
 
 ## Architecture (in 10 lines)
 
@@ -46,7 +46,7 @@ Any wallet holding an Agent ID can claim **once per day** (1 transaction, gas on
 - No pause, no upgrade proxy, no kill switch.
 - No function that can move, lock, or seize any user's streak, badge, or funds.
 
-> Status: this is the design specification. It will be confirmed against the deployed contract once deployed — if the deployed contract contains any owner or admin function, this section will be corrected and the discrepancy disclosed here.
+> Status: CONFIRMED against the deployed contract — the on-chain runtime code matches the compiled source exactly (3,402 bytes), and the source contains no owner or admin function.
 
 ## Security
 
@@ -55,7 +55,7 @@ Any wallet holding an Agent ID can claim **once per day** (1 transaction, gas on
 - **No token, no yield, no returns**: AgentStreak does not issue a token and does not promise any income, reward, or prize to users.
 - **No seed phrase, QR code, or pairing code**: AgentStreak never asks for your seed phrase, private key, wallet QR scan, or pairing code. Anyone asking for those in AgentStreak's name is a scammer.
 - **Every transaction is confirmed by you**: each claim is a transaction you review and confirm in your own wallet. Nothing is signed or sent without you.
-- **Open source**: the contract source is published in this repo and verified on BscScan (see `docs/VERIFICATION.md`) so anyone can read exactly what it does.
+- **Open source**: the contract source is published in this repo; BscScan source verification is pending (artifacts ready — see `docs/VERIFICATION.md`) so anyone can read exactly what it does.
 
 ## Hackathon
 
@@ -66,7 +66,7 @@ Eligibility for the project awards requires the product to be live with **at lea
 ## Links
 
 - Repository: https://github.com/Mrcl1998/agentstreak
-- Contract on BscScan: TBD — pending deploy
+- Contract on BscScan: https://bscscan.com/address/0x3ce06B00DE25d6062D771664C231bb7Af725ecdb
 - Agent ID contract on BscScan: https://bscscan.com/address/0x60b9262456de011f7d15a54cdd8c48baaa8b022f
 
 ## License

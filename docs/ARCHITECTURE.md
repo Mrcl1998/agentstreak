@@ -63,14 +63,16 @@ regardless of the user's local timezone.
 - **Deploy budget constraint: the deploy transaction must fit within ~0.00039107 BNB**
   (the available wallet balance at build time). This is a hard cap, not a target.
 - Claim is a single lightweight transaction: one ERC-721 `balanceOf` check, a few storage
-  writes (`lastClaimDay`, `streak`, `bestStreak`, `totalClaims`, `claimants` push on first
+  writes (`lastClaimDay`, `streak`, `totalClaims`, `hasBadge`, `claimants` push on first
   claim), plus badge mint on first claim only. No loops over unbounded arrays in `claim()`.
-- TODO: fill in exact measured numbers once the contract agent reports them:
-  - Deploy gas used / cost at deploy-time gas price: **TODO**
-  - Claim gas (first claim, with badge mint): **TODO**
-  - Claim gas (repeat claim, no badge): **TODO**
+- Measured numbers (deployed 18 Nov 2026, block 134331779, tx `0x28e466571d0e58da5ed42dc348024fceb4af6d55b54cc1001353894bd2fd9482`):
+  - Deploy gas used: **790,870 gas**, fee **0.00006632 BNB** @ 0.0839 gwei (via EIP-2470 factory, gas-limit cap 1,000,000; node estimate was 805,504).
+  - Claim gas (first claim, with badge mint): **122,324 gas** (Foundry-measured).
+  - Claim gas (repeat claim, no badge): **40,232 gas** (Foundry-measured).
+- Note: the first deploy attempt used the wrong calldata format for the factory (ABI-encoded `deploy(bytes,bytes32)` instead of raw `salt || initCode`) and deployed an empty contract at `0x2cEc7F4f026D1c103bfecC142519c9E1Be5404F9`, costing 0.00001095 BNB. The factory expects raw `salt (32 bytes) || initCode` — no selector, no ABI encoding. Total spent on deploys: 0.00007727 BNB; wallet balance after: 0.00031381 BNB.
 - Known compiler settings (from `contract/foundry.toml`, confirmed): solc **0.8.26**,
-  optimizer **enabled, 200 runs** (also recorded in `docs/VERIFICATION.md`).
+  optimizer **enabled, 200 runs, via_ir=true** (also recorded in `docs/VERIFICATION.md`).
+- Deploy status: **DEPLOYED within budget** — fee 0.00006632 BNB vs the 0.00039107 BNB cap.
 - If the deploy does not fit the budget, the contract must be slimmed (fewer storage
   slots, no unused code) before any retry — do not fund the deploy from another wallet
   without the owner's explicit approval.
