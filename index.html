@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AgentStreak — Daily Streak for Agent ID Holders</title>
+<link rel="stylesheet" href="styles.css">
+<script src="https://cdn.jsdelivr.net/npm/ethers@6.13.2/dist/ethers.umd.min.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap header-inner">
+    <div>
+      <h1>AgentStreak</h1>
+      <p class="tagline">Built for the Binance Agent ID Hackathon</p>
+    </div>
+    <div class="wallet-box">
+      <span id="addressDisplay" class="address hidden"></span>
+      <button id="connectBtn" class="btn btn-primary">Connect Wallet</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div id="networkWarning" class="alert alert-warn hidden">
+    You are not on BNB Smart Chain (chainId 56).
+    <button id="switchNetworkBtn" class="btn btn-small">Switch to BNB Chain</button>
+  </div>
+  <div id="noProvider" class="alert alert-warn hidden">
+    No injected wallet found. Install MetaMask or the Binance Wallet extension, then refresh this page.
+  </div>
+  <div id="notDeployed" class="alert alert-info">
+    The AgentStreak contract is not deployed yet — read-only stats and the leaderboard are unavailable until the contract address is set.
+  </div>
+  <div id="errorBox" class="alert alert-error hidden"></div>
+
+  <section class="grid">
+    <!-- Agent ID status -->
+    <div class="card">
+      <h2>Agent ID</h2>
+      <p id="agentIdStatus" class="big">Connect your wallet to check</p>
+      <p class="muted">Agent ID is a soulbound ERC-721 issued by the Binance Wallet.
+        Holding one is required to claim a streak.</p>
+      <a class="link" href="https://bscscan.com/address/0x60b9262456de011f7d15a54cdd8c48baaa8b022f" target="_blank" rel="noopener">View Agent ID contract on BscScan ↗</a>
+    </div>
+
+    <!-- Streak -->
+    <div class="card">
+      <h2>Your Streak</h2>
+      <div class="stat-row">
+        <div class="stat"><span class="stat-num" id="streakNum">–</span><span class="stat-label">current streak (days)</span></div>
+        <div class="stat"><span class="stat-num" id="totalClaimsNum">–</span><span class="stat-label">total claims</span></div>
+      </div>
+      <p class="muted">Last claim day: <span id="lastClaimDay">–</span></p>
+      <p class="muted">Next claim in: <span id="countdown">–</span></p>
+      <button id="claimBtn" class="btn btn-primary btn-wide" disabled>Connect wallet first</button>
+      <p id="claimStatus" class="muted"></p>
+      <p id="txResult" class="muted"></p>
+    </div>
+
+    <!-- Badge -->
+    <div class="card">
+      <h2>Your Badge</h2>
+      <p id="badgeStatus" class="big">Connect your wallet to check</p>
+      <p class="muted">Soulbound — cannot be transferred.</p>
+      <p id="badgeMeta" class="muted"></p>
+      <p id="badgeTokenId" class="muted"></p>
+    </div>
+
+    <!-- Leaderboard -->
+    <div class="card card-wide">
+      <h2>Leaderboard <span class="muted small">— top 20 by streak, then total claims</span></h2>
+      <p id="lbStatus" class="muted">Waiting for contract deployment…</p>
+      <table id="lbTable" class="hidden">
+        <thead><tr><th>#</th><th>Address</th><th>Streak</th><th>Total claims</th></tr></thead>
+        <tbody id="lbBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>How it works</h2>
+    <ol>
+      <li>Connect your wallet (MetaMask or Binance Wallet extension). Nothing is stored anywhere — there is no server.</li>
+      <li>Hold an Agent ID. One claim per day, every day, to build your streak.</li>
+      <li>Your first claim mints a soulbound badge. Your badge tokenId is your address as a number.</li>
+      <li>Every claim is a transaction you confirm yourself in your own wallet.</li>
+    </ol>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>No token. No rewards. No fees except gas. Every transaction is confirmed by you in your own wallet. AgentStreak never asks for your seed phrase, QR code, or pairing code.</p>
+  </div>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
